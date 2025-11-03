@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Demo ISO Dashboard — Usando style.css</title>
+    <meta name="description" content="Página de ejemplo que utiliza todas las reglas definidas en style.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-DMWcZKdt.css">
+  </head>
+  <body>
+
+    <!-- HEADER -->
+    <header>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <img class="logo" src="https://via.placeholder.com/48" alt="logo" style="height:48px;border-radius:8px;"/>
+        <h1>ISO Dashboard — Demo</h1>
+      </div>
+      <div>
+        <button class="btn">Principal</button>
+        <button class="btn btn-secondary">Secundario</button>
+        <button class="btn btn-danger">Eliminar</button>
+      </div>
+    </header>
+
+    <!-- MAIN: tarjetas, formulario, tablas y progreso -->
+    <main>
+      <!-- Tarjeta con formulario (usa inputs, labels, textarea, select) -->
+      <section class="card">
+        <h2>Formulario de ejemplo</h2>
+        <p class="small">Ejemplo que muestra inputs, selects y textarea.</p>
+
+        <form>
+          <label for="email">Correo electrónico</label>
+          <input id="email" type="email" placeholder="usuario@ejemplo.com">
+
+          <label for="name">Nombre</label>
+          <input id="name" type="text" placeholder="Nombre completo">
+
+          <label for="role">Rol</label>
+          <select id="role">
+            <option>Administrador</option>
+            <option>Responsable</option>
+            <option>Invitado</option>
+          </select>
+
+          <label for="notes">Notas</label>
+          <textarea id="notes" rows="4" placeholder="Comentarios..."></textarea>
+
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="btn" type="button" onclick="alert('Enviar (simulado)')">Enviar</button>
+            <button class="btn btn-secondary" type="button">Cancelar</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Tarjeta con progreso -->
+      <section class="card">
+        <h3>Indicadores de progreso</h3>
+        <div style="margin-bottom:12px">
+          <label class="small">Avance general</label>
+          <div class="progress" aria-hidden>
+            <div id="bar1" class="bar success" style="width:75%"></div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:12px">
+          <label class="small">Riesgos</label>
+          <div class="progress">
+            <div id="bar2" class="bar warning" style="width:40%"></div>
+          </div>
+        </div>
+
+        <div>
+          <label class="small">No conformidades</label>
+          <div class="progress">
+            <div id="bar3" class="bar error" style="width:20%"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tarjeta con tabla (usa table, th, td) -->
+      <section class="card">
+        <h3>Tabla de predios</h3>
+        <table>
+          <thead>
+            <tr><th>Predio</th><th>Responsable</th><th>Cumplimiento</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Ciudad Universitaria</td><td>G. Morales</td><td>86%</td></tr>
+            <tr><td>Campus Sur</td><td>L. Gómez</td><td>74%</td></tr>
+            <tr><td>Centro Agro</td><td>M. Rojas</td><td>62%</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Login container (usa .login-container) -->
+      <section class="login-container card">
+        <h2>Acceso rápido (demo)</h2>
+        <label for="demoUser">Usuario</label>
+        <input id="demoUser" type="text" placeholder="usuario.demo@unal.edu.co">
+
+        <label for="demoPwd">Contraseña</label>
+        <input id="demoPwd" type="password" placeholder="password">
+
+        <div style="display:flex;gap:8px;margin-top:12px;justify-content:center;">
+          <button class="btn" onclick="alert('Login demo')">Entrar</button>
+          <button class="btn btn-secondary" onclick="document.querySelector('.login-container').classList.toggle('hidden')">Alternar</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      Sitio de demostración — Universidad para la Sostenibilidad • &copy; <span id="year"></span>
+    </footer>
+
+    <script>
+      // pequeña mejora: animar barras de progreso al cargar
+      document.getElementById('year').textContent = new Date().getFullYear();
+      // Si quieres modificar dinámicamente las barras, puedes usar:
+      // document.getElementById('bar1').style.width = '80%';
+    </script>
+  </body>
+</html>
