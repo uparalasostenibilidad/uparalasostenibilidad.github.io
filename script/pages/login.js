@@ -61,7 +61,7 @@ function renderDashboard(user) {
       <!-- Barra de navegación página -->
       <label class="logo">Bienvenido, ${user.email}</label>
       <ul>
-          <li><button id="btnLogout" class="btn btn-danger">Salir</button></li>
+          <li><a href="#" id="btnLogout" class="btn btn-danger">Salir</a></li>
       </ul>
     </nav>
 
@@ -104,7 +104,9 @@ async function registerUser() {
   alert("✅ Cuenta creada. Revisa tu correo para confirmar.");
 }
 
-async function logoutUser() {
+async function logoutUser(e) {
+  // Si se llama desde un evento de click en un enlace, prevenir navegación
+  if (e && typeof e.preventDefault === 'function') e.preventDefault();
   await supabase.auth.signOut();
   renderLogin();
 }
