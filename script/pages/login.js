@@ -1,5 +1,6 @@
 // script/pages/login.js
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { getDashboardPanels } from "./dashboard.js";
 
 const SUPABASE_URL = "https://hkxugotjfkyalmlkojhq.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhreHVnb3RqZmt5YWxtbGtvamhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxODk3MTAsImV4cCI6MjA3Nzc2NTcxMH0.mV21rbO4K5gfmYWF_ZB5mcjPG2TLu80w0SOMBCoDkaE";
@@ -31,7 +32,7 @@ app.innerHTML = `
         <p>¿No tienes cuenta? <a href="#" id="signupLink">Regístrate</a></p>
 
         <div id="register" style="display:none; margin-top:20px;">
-            <h3 style="color:#0b5345">Crear cuenta</h3>
+            <h2>Crear cuenta</h2>
             <div class="input-box">
                 <i>👤</i>
                 <input type="email" id="regEmail" placeholder="Correo electrónico" />
@@ -54,17 +55,29 @@ app.innerHTML = `
 }
 
 function renderDashboard(user) {
+  // Renderizamos un encabezado (head) con la info de login y un contenedor para los paneles
   app.innerHTML = `
-    <section class="card dashboard">
-      <h2>Bienvenido, ${user.email} 👋</h2>
-      <p>Panel principal de seguimiento ISO 14001</p>
-      <div style="margin-top:20px;">
-        <button id="btnLogout" class="btn btn-danger">Salir</button>
-      </div>
-    </section>
+    <nav>
+      <!-- Barra de navegación página -->
+      <label class="logo">Bienvenido, ${user.email}</label>
+      <ul>
+          <li><button id="btnLogout" class="btn btn-danger">Salir</button></li>
+      </ul>
+    </nav>
+
+    <main id="dashboardContent" class="dashboard-main">
+      <!-- Los paneles se insertarán aquí -->
+    </main>
   `;
+
   // Quitar la clase de centrado al mostrar el dashboard
   document.body.classList.remove('auth-page');
+
+  // Insertar los paneles de dashboard desde el módulo
+  const dashContainer = document.getElementById('dashboardContent');
+  if (dashContainer) dashContainer.innerHTML = getDashboardPanels(user);
+
+  // Registrar eventos
   document.getElementById("btnLogout").addEventListener("click", logoutUser);
 }
 

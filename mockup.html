@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EcoTrack UNAL – Versión Institucional (Mockup)</title>
+  <meta name="description" content="Mockup con estilo institucional clásico: tipografía grande, colores sobrios y componentes simples.">
+  <style>
+    :root{
+      /* Paleta institucional clásica (fondo claro) */
+      --bg:#f7f7f7;
+      --surface:#ffffff;
+      --surface-2:#fafafa;
+      --text:#222222;
+      --muted:#555555;
+      --line:#d8d8d8;
+      --brand:#2f6b3c;     /* verde oliva/UNAL */
+      --brand-2:#3b7c48;
+      --ok:#2e7d32;
+      --warn:#c77700;
+      --bad:#c62828;
+      --radius: 8px;
+      --shadow: none;      /* sin sombras modernas */
+      --font: "Segoe UI", Arial, Helvetica, sans-serif;
+      --base: 27px;        /* tipografía más grande */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:var(--font); font-size:var(--base); line-height:1.5; color:var(--text); background:var(--bg);
+    }
+    .app{display:grid; grid-template-columns: 260px 1fr; min-height:100vh}
+    /* Sidebar clásico */
+    aside{background:#f0f3f0; border-right:1px solid var(--line); padding:20px; position:sticky; top:0; height:100vh; overflow:auto}
+    .brand{display:flex; gap:10px; align-items:center; margin-bottom:18px}
+    .brand .logo{width:36px; height:36px; border-radius:6px; background:var(--brand); display:grid; place-items:center; color:#fff; font-weight:700}
+    .brand h1{font-size:18px; margin:0; font-weight:700}
+    .brand small{display:block; color:#34553e; font-size:13px}
+    nav a{display:flex; gap:10px; align-items:center; padding:10px 12px; color:var(--text); text-decoration:none; border-radius:6px}
+    nav a:hover{background:#e8ece8}
+    nav a.active{background:#e0e7e0; font-weight:600}
+    nav small{display:block; margin:16px 8px 6px; color:#34553e; font-weight:600; font-size:13px}
+    .badge{margin-left:auto; font-size:12px; padding:2px 8px; border-radius:999px; background:#e7eee7; border:1px solid var(--line); color:#23452d}
+
+    /* Header clásico */
+    header{display:flex; align-items:center; justify-content:space-between; padding:14px 20px; background:var(--surface); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5}
+    .search{display:flex; gap:8px; align-items:center; background:var(--surface-2); border:1px solid var(--line); padding:10px 12px; border-radius:6px; width:min(560px, 90%)}
+    .search input{flex:1; border:none; outline:none; background:transparent; font-size:16px}
+    .actions{display:flex; gap:10px}
+    .btn{background:var(--brand); color:#fff; border:1px solid #275c34; padding:10px 14px; border-radius:6px; cursor:pointer; font-weight:600}
+    .btn.secondary{background:#ececec; color:#222; border:1px solid var(--line)}
+
+    /* Contenido */
+    main{padding:20px; display:grid; gap:16px}
+    .panel{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:16px; box-shadow:var(--shadow)}
+    .panel h3{margin:0 0 6px; font-size:18px}
+    .muted{color:var(--muted); font-size:15px}
+    .grid{display:grid; gap:16px}
+    .grid.cols-3{grid-template-columns:2fr 1fr 1fr}
+    .grid.cols-2{grid-template-columns:1fr 1fr}
+    .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:10px}
+    .kpi{padding:12px; border-radius:6px; border:1px solid var(--line); background:var(--surface-2)}
+    .kpi strong{font-size:22px; display:block; margin-top:4px}
+
+    /* Indicador circular (estilo sobrio) */
+    .flex{display:flex; gap:16px; align-items:center}
+    .progress-ring{width:150px;height:150px}
+    .legend{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px}
+    .legend span{display:inline-flex; align-items:center; gap:6px; background:#eef3ee; border:1px solid var(--line); padding:6px 10px; border-radius:6px; color:#2a4a34; font-size:14px}
+    .dot{width:10px;height:10px;border-radius:999px; display:inline-block}
+    .ok{background:var(--ok)} .warn{background:var(--warn)} .bad{background:var(--bad)}
+
+    table{width:100%; border-collapse:collapse; font-size:16px}
+    th, td{padding:12px; border-bottom:1px solid var(--line); text-align:left}
+    thead th{position:sticky; top:0; background:#f1f1f1}
+    tr:hover td{background:#f9f9f9}
+    .pill{padding:4px 10px; border-radius:999px; font-weight:700; font-size:13px; border:1px solid var(--line)}
+    .pill.ok{background:#e8f3ea; color:#1b5e20}
+    .pill.mid{background:#fff5e5; color:#8a5a00}
+    .pill.low{background:#fdecec; color:#a42727}
+
+    .footer{color:#666; font-size:14px; text-align:center; padding:10px}
+
+    /* Modal */
+    dialog{border:1px solid var(--line); border-radius:8px; padding:0; overflow:hidden; max-width:760px; width:95%; background:var(--surface); color:var(--text)}
+    dialog::backdrop{background:rgba(0,0,0,.35)}
+    .modal-header{display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid var(--line); background:#f3f6f3}
+    .modal-body{padding:16px}
+    .close{background:#ececec; color:#222; border:1px solid var(--line); border-radius:6px; padding:8px 10px; cursor:pointer}
+
+    /* Responsive */
+    @media (max-width: 1100px){
+      .app{grid-template-columns: 200px 1fr}
+      .grid.cols-3{grid-template-columns:1fr}
+      .grid.cols-2{grid-template-columns:1fr}
+      .kpis{grid-template-columns:repeat(2,1fr)}
+      .progress-ring{width:130px;height:130px}
+    }
+    @media print{
+      aside, header, .actions{display:none !important}
+      body{background:#fff}
+      .panel{box-shadow:none}
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">UN</div>
+        <div>
+          <h1 style="margin:0">EcoTrack UNAL</h1>
+          <small>ISO 14001 – Sede Bogotá</small>
+        </div>
+      </div>
+      <nav aria-label="Navegación principal">
+        <a href="#" class="active"><span>📊</span><span>Inicio</span></a>
+        <a href="#predios"><span>🏢</span><span>Predios</span><span class="badge" id="predioCount">—</span></a>
+        <a href="#reportes"><span>📑</span><span>Reportes</span></a>
+        <a href="#alertas"><span>⚠️</span><span>Alertas</span><span class="badge" id="alertCount">0</span></a>
+        <a href="#config"><span>⚙️</span><span>Configuración</span></a>
+        <small>Accesos</small>
+        <a href="#" onclick="window.print()"><span>🖨️</span><span>Imprimir</span></a>
+        <a href="#" id="openAbout"><span>ℹ️</span><span>Acerca de</span></a>
+      </nav>
+    </aside>
+
+    <div>
+      <header>
+        <div class="search" role="search">
+          🔎
+          <input id="searchInput" placeholder="Buscar predio, alerta o requisito…" aria-label="Buscar">
+        </div>
+        <div class="actions">
+          <button class="btn secondary" id="btnNuevaEvidencia">Subir evidencia</button>
+          <button class="btn" id="btnNuevoReporte">Generar reporte</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="panel" aria-labelledby="resumen">
+          <h3 id="resumen">Resumen general</h3>
+          <p class="muted">Seguimiento del cumplimiento de la ISO 14001 en la Sede Bogotá. Interfaz de lectura cómoda y clásica.</p>
+          <div class="grid cols-3">
+            <div class="flex">
+              <svg class="progress-ring" viewBox="0 0 120 120" aria-label="Cumplimiento general">
+                <circle cx="60" cy="60" r="52" stroke="#e0e0e0" stroke-width="12" fill="none"/>
+                <circle id="progress" cx="60" cy="60" r="52" stroke="var(--brand)"
+                        stroke-width="12" fill="none" stroke-linecap="round"
+                        transform="rotate(-90 60 60)" stroke-dasharray="326 326" stroke-dashoffset="326"/>
+                <text id="progressText" x="60" y="66" text-anchor="middle" font-size="20" fill="#1b3a25" font-weight="700">—%</text>
+              </svg>
+              <div>
+                <div class="legend">
+                  <span><i class="dot ok"></i> Óptimo ≥ 80%</span>
+                  <span><i class="dot warn"></i> Intermedio 60–79%</span>
+                  <span><i class="dot bad"></i> Crítico &lt; 60%</span>
+                </div>
+                <div class="kpis">
+                  <div class="kpi"><div class="muted">Predios evaluados</div><strong id="kpiPredios">—</strong></div>
+                  <div class="kpi"><div class="muted">Requisitos aprobados</div><strong id="kpiReqOk">—</strong></div>
+                  <div class="kpi"><div class="muted">Alertas abiertas</div><strong id="kpiAlertas">—</strong></div>
+                  <div class="kpi"><div class="muted">Última actualización</div><strong id="kpiFecha">—</strong></div>
+                </div>
+              </div>
+            </div>
+            <div class="panel">
+              <h3>Comparativo por predio</h3>
+              <canvas id="barPredios" height="180" aria-label="Gráfico de barras"></canvas>
+            </div>
+            <div class="panel">
+              <h3>Evolución trimestral</h3>
+              <canvas id="lineEvolucion" height="180" aria-label="Gráfico de líneas"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <section id="predios" class="panel" aria-labelledby="listaPredios">
+          <h3 id="listaPredios">Predios</h3>
+          <p class="muted">Porcentaje de cumplimiento y estado.</p>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+            <div class="legend">
+              <span><i class="dot ok"></i> ≥ 80%</span>
+              <span><i class="dot warn"></i> 60–79%</span>
+              <span><i class="dot bad"></i> &lt; 60%</span>
+            </div>
+            <div>
+              <label class="muted" for="orden">Ordenar:&nbsp;</label>
+              <select id="orden" style="padding:8px; border:1px solid var(--line); background:#fff; border-radius:6px">
+                <option value="desc">Mayor a menor</option>
+                <option value="asc">Menor a mayor</option>
+                <option value="name">Nombre</option>
+              </select>
+            </div>
+          </div>
+          <div style="overflow:auto; max-height:440px; border:1px solid var(--line); border-radius:6px; background:#fff">
+            <table>
+              <thead>
+                <tr>
+                  <th>Predio</th>
+                  <th>Responsable</th>
+                  <th>Cumplimiento</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyPredios"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="alertas" class="panel" aria-labelledby="listaAlertas">
+          <h3 id="listaAlertas">Alertas recientes</h3>
+          <div class="grid cols-2">
+            <div class="panel">
+              <h3>Distribución por tipo</h3>
+              <canvas id="pieTipos" height="180"></canvas>
+            </div>
+            <div class="panel">
+              <h3>Alertas abiertas</h3>
+              <ul id="listaAlertasUl" style="margin:0;padding-left:18px"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="reportes" class="panel" aria-labelledby="reportesTitulo">
+          <h3 id="reportesTitulo">Reportes automáticos</h3>
+          <div style="display:flex; gap:10px; align-items:center">
+            <div>
+              <label class="muted" for="periodo">Periodo:&nbsp;</label>
+              <select id="periodo" style="padding:8px; border:1px solid var(--line); background:#fff; border-radius:6px">
+                <option>Último mes</option>
+                <option>Último trimestre</option>
+                <option selected>Último semestre</option>
+                <option>Último año</option>
+              </select>
+            </div>
+            <button class="btn secondary" id="btnVistaPrevia">Vista previa</button>
+            <button class="btn" id="btnDescargar">Descargar PDF</button>
+          </div>
+          <p class="muted">Informe con gráficos, tablas y alertas para la OGA y el Consejo de Sede.</p>
+        </section>
+
+        <div class="footer">Mockup de referencia (versión institucional). No es un sistema real.</div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Acerca de -->
+  <dialog id="about">
+    <div class="modal-header">
+      <strong>EcoTrack UNAL — Acerca de</strong>
+      <button class="close" onclick="about.close()">Cerrar</button>
+    </div>
+    <div class="modal-body">
+      <p>Versión con estilo institucional clásico: fondo claro, tipografía grande, sin efectos modernos. Pensada para uso por personal no especializado.</p>
+    </div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+  // Datos de ejemplo
+  const predios = [
+    { nombre: "Ciudad Universitaria", responsable: "D. Moreno", cumplimiento: 86 },
+    { nombre: "Centro Agropecuario Marengo", responsable: "M. Rojas", cumplimiento: 62 },
+    { nombre: "Hospital Universitario", responsable: "S. Pérez", cumplimiento: 45 },
+    { nombre: "Campus Santa Rosa", responsable: "L. García", cumplimiento: 78 },
+    { nombre: "Complejo cultural casa Gaitán", responsable: "P. Álvarez", cumplimiento: 91 },
+    { nombre: "Claustro San Agustín", responsable: "N. Gómez", cumplimiento: 73 },
+    { nombre: "Observatorio Astronómico Nacional", responsable: "C. Torres", cumplimiento: 67 },
+    { nombre: "Edificio Las Nieves", responsable: "V. Pardo", cumplimiento: 81 }
+  ];
+const alertas = [
+  {
+    tipo: "Documental",
+    texto: "Matriz de aspectos e impactos ambientales no actualizada (cláusula 6.1.2) en Ciudad Universitaria.",
+    gravedad: "alta"
+  },
+  {
+    tipo: "Legal",
+    texto: "Matriz de requisitos legales y otros no actualizada y sin evaluación de cumplimiento (6.1.3 y 9.1.2) en Edificio Las Nieves.",
+    gravedad: "alta"
+  },
+  {
+    tipo: "Operativa",
+    texto: "Faltan controles operacionales para segregación y almacenamiento de residuos peligrosos en Hospital Universitario (8.1).",
+    gravedad: "alta"
+  },
+  {
+    tipo: "Emergencias",
+    texto: "Plan de preparación y respuesta ante emergencias sin simulacro anual registrado en Campus Santa Rosa (8.2).",
+    gravedad: "media"
+  },
+  {
+    tipo: "Documental",
+    texto: "Control de información documentada deficiente: procedimientos con versiones no vigentes en Claustro San Agustín (7.5).",
+    gravedad: "media"
+  },
+  {
+    tipo: "Competencia",
+    texto: "Registros de capacitación/competencia ambiental incompletos para personal de residuos en Centro Agropecuario Marengo (7.2, 7.3).",
+    gravedad: "media"
+  },
+  {
+    tipo: "Seguimiento",
+    texto: "Equipos de medición sin calibración vigente para monitoreo de vertimientos en Observatorio Astronómico Nacional (9.1.1).",
+    gravedad: "alta"
+  },
+  {
+    tipo: "Auditoría",
+    texto: "Programa de auditoría interna vencido y sin informe de cierre en Complejo cultural casa Gaitán (9.2).",
+    gravedad: "media"
+  },
+  {
+    tipo: "Revisión",
+    texto: "Acta de revisión por la dirección del período actual no disponible en Ciudad Universitaria (9.3).",
+    gravedad: "baja"
+  }
+];
+
+
+  const $ = (s)=>document.querySelector(s);
+  function estadoPill(p){
+    if(p>=80) return '<span class="pill ok">Óptimo</span>';
+    if(p>=60) return '<span class="pill mid">Intermedio</span>';
+    return '<span class="pill low">Crítico</span>';
+  }
+  function ordenar(list, mode){
+    if(mode==='name') return [...list].sort((a,b)=>a.nombre.localeCompare(b.nombre));
+    if(mode==='asc') return [...list].sort((a,b)=>a.cumplimiento-b.cumplimiento);
+    return [...list].sort((a,b)=>b.cumplimiento-a.cumplimiento);
+  }
+
+  function initKPIs(){
+    $("#kpiPredios").textContent = predios.length;
+    $("#kpiReqOk").textContent = Math.round(predios.reduce((a,p)=>a+p.cumplimiento,0)/predios.length * 0.15) + " req.";
+    $("#kpiAlertas").textContent = alertas.length;
+    $("#kpiFecha").textContent = new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});
+
+    const prom = Math.round(predios.reduce((a,p)=>a+p.cumplimiento,0)/predios.length);
+    const circ = $("#progress");
+    const len = 2*Math.PI*52;
+    const offset = len - (prom/100)*len;
+    circ.style.strokeDashoffset = len;
+    requestAnimationFrame(()=>{
+      circ.style.transition = "stroke-dashoffset 1s ease";
+      circ.style.strokeDashoffset = offset;
+    });
+    $("#progressText").textContent = prom + "%";
+  }
+
+  function pintarTabla(order="desc"){
+    const tbody = $("#tbodyPredios");
+    tbody.innerHTML = ordenar(predios, order).map(p => `
+      <tr>
+        <td style="font-weight:600">${p.nombre}</td>
+        <td>${p.responsable}</td>
+        <td>${p.cumplimiento}%</td>
+        <td>${estadoPill(p.cumplimiento)}</td>
+        <td><button class="btn secondary" onclick="verDetalle('${p.nombre}')">Ver detalle</button></td>
+      </tr>`).join("");
+    $("#predioCount").textContent = predios.length;
+  }
+
+  function initAlertas(){
+    $("#alertCount").textContent = alertas.length;
+    const ul = $("#listaAlertasUl");
+    ul.innerHTML = "";
+    alertas.forEach(a=>{
+      const color = a.gravedad==="alta" ? "var(--bad)" : (a.gravedad==="media"?"var(--warn)":"var(--brand)");
+      const li = document.createElement("li");
+      li.style.marginBottom = "8px";
+      li.innerHTML = `<strong style="color:${color}">${a.tipo}</strong> — ${a.texto}`;
+      ul.appendChild(li);
+    });
+  }
+
+  let barChart, lineChart, pieChart;
+  function initCharts(){
+    const ctx1 = document.getElementById('barPredios').getContext('2d');
+    const ctx2 = document.getElementById('lineEvolucion').getContext('2d');
+    const ctx3 = document.getElementById('pieTipos').getContext('2d');
+
+    barChart = new Chart(ctx1, {
+      type:'bar',
+      data:{
+        labels: predios.map(p=>p.nombre.split(" ").slice(0,2).join(" ")),
+        datasets:[{
+          label:'Cumplimiento (%)',
+          data: predios.map(p=>p.cumplimiento),
+          backgroundColor: predios.map(p=> p.cumplimiento>=80? '#a8d5b0': (p.cumplimiento>=60? '#ffe0a6' : '#f7b1b1')),
+          borderColor: '#bdbdbd',
+          borderWidth:1
+        }]
+      },
+      options:{
+        plugins:{legend:{display:false}},
+        scales:{
+          y:{grid:{color:'#e5e5e5'}, ticks:{color:'#333'}, beginAtZero:true, max:100},
+          x:{grid:{display:false}, ticks:{color:'#333'}}
+        }
+      }
+    });
+
+    lineChart = new Chart(ctx2, {
+      type:'line',
+      data:{
+        labels:['T1','T2','T3','T4'],
+        datasets:[{
+          label:'Cumplimiento general (%)',
+          data:[58,64,69,76],
+          borderColor: '#2f6b3c',
+          backgroundColor: '#cfe5d6',
+          tension:.25,
+          fill:true,
+          pointRadius:3
+        }]
+      },
+      options:{plugins:{legend:{display:false}}, scales:{y:{ticks:{color:'#333'}, grid:{color:'#e5e5e5'}, min:0, max:100}, x:{ticks:{color:'#333'}, grid:{display:false}}}}
+    });
+
+    const tipos = [...new Set(alertas.map(a=>a.tipo))];
+    const conteo = tipos.map(t=>alertas.filter(a=>a.tipo===t).length);
+    pieChart = new Chart(ctx3, {
+      type:'doughnut',
+      data:{
+        labels: tipos,
+        datasets:[{ data: conteo, backgroundColor:['#a8d5b0','#ffe0a6','#f7b1b1','#bcd3f7','#e2d4ff'] }]
+      },
+      options:{plugins:{legend:{labels:{color:'#333'}}}}
+    });
+  }
+
+function verDetalle(nombre){
+  const p = predios.find(x=>x.nombre===nombre);
+  const dlg = document.createElement('dialog');
+  let acciones = `
+    <ul>
+      <li>Actualizar la matriz de aspectos e impactos ambientales (cláusula 6.1.2).</li>
+      <li>Revisar cumplimiento de requisitos legales y otros (6.1.3, 9.1.2).</li>
+      <li>Ejecutar auditoría interna pendiente (9.2) y registrar resultados.</li>
+      <li>Actualizar plan de emergencias y registrar simulacro anual (8.2).</li>
+      <li>Verificar calibración y mantenimiento de equipos de seguimiento ambiental (9.1.1).</li>
+    </ul>`;
+
+  dlg.innerHTML = `
+    <div class="modal-header">
+      <strong>${nombre} — Detalle del cumplimiento</strong>
+      <button class="close">Cerrar</button>
+    </div>
+    <div class="modal-body">
+      <p>Cumplimiento actual: <strong>${p.cumplimiento}%</strong> ${estadoPill(p.cumplimiento)}</p>
+      <p>Acciones sugeridas según ISO 14001:</p>
+      ${acciones}
+      <p style="margin-top:12px; font-size:15px; color:#555;">
+        Referencias clave: 6.1 (Planificación), 7.2–7.5 (Apoyo), 8.1–8.2 (Operación),
+        9.1–9.3 (Evaluación del desempeño) y 10.2 (Mejora).
+      </p>
+    </div>`;
+  
+  dlg.querySelector('.close').addEventListener('click', ()=>dlg.close());
+  document.body.appendChild(dlg);
+  dlg.showModal();
+  dlg.addEventListener('close', ()=> dlg.remove());
+}
+
+
+  $("#searchInput").addEventListener('input', (e)=>{
+    const q = e.target.value.toLowerCase().trim();
+    const rows = [...document.querySelectorAll("#tbodyPredios tr")];
+    rows.forEach(tr=>{ tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none"; });
+  });
+  $("#orden").addEventListener('change', (e)=> pintarTabla(e.target.value));
+  document.getElementById('openAbout').addEventListener('click', (e)=>{ e.preventDefault(); about.showModal();});
+  document.getElementById('btnDescargar').addEventListener('click', ()=> alert("Descarga de PDF (simulado)."));
+  document.getElementById('btnVistaPrevia').addEventListener('click', ()=> alert("Vista previa del reporte (simulada)."));
+  document.getElementById('btnNuevaEvidencia').addEventListener('click', ()=> alert("Subida de evidencia (simulada)."));
+  document.getElementById('btnNuevoReporte').addEventListener('click', ()=> alert("Generación de reporte (simulada)."));
+
+  // Init
+  initKPIs(); pintarTabla(); initAlertas(); initCharts();
+  </script>
+</body>
+</html>

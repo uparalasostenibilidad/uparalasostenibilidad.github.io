@@ -1,5 +1,5 @@
 :root {
-    --white: #222222;
+    --text-1: #222222;
     --background: #f7f7f7;
     --background-hover: #565758;
     --background-hover-t: #56575859;
@@ -7,7 +7,7 @@
     --primary-red: #E53935;
     --primary-blue: #1976D2;
     --primary-orange: #FF6F00;
-    --primary-green: #275c34;
+    --primary-green: #2f6b3c;
     --blue-gray: #f4fcff;
     --primary-violet: #6238E2;
     --background-violet-light: #EEEBFD;
@@ -46,7 +46,7 @@ body {
     margin-bottom: 4px;
     /*background-image: url(public/img/misc/bg205.gif); */
     background: var(--background);
-    color: var(--white);
+    color: var(--text-1);
 }
 
 #viewer3d {
@@ -70,7 +70,7 @@ a.link {
 label.logo {
     display: center;
     font-size: large;
-    color: #c9c9c9;
+    color: var(--background-hover);
     font-weight: bold;
     min-width: auto;
 }
@@ -138,14 +138,14 @@ nav ul li a {
 
 a.active,
 a:hover {
-    color: var(--white);
+    color: var(--text-1);
     text-decoration-line: underline;
     text-underline-offset: 3px;
     transition: .5s;
 }
 
 a.home {
-    color: var(--white);
+    color: var(--text-1);
     text-underline-offset: 3px;
     transition: .5s;
 }
@@ -359,13 +359,13 @@ hr.resistencia {
 }
 
 .faq-title {
-    color: var(--white);
+    color: var(--text-1);
     width: 90%;
     transition: all 250ms ease-in-out;
 }
 
 .faq-content {
-    color: var(--white);
+    color: var(--text-1);
     padding: 0.2rem 1rem 1rem 1rem;
     font-weight: 300;
     line-height: 1.5;
@@ -407,7 +407,7 @@ summary {
 }
 
 summary svg {
-    stroke: var(--white);
+    stroke: var(--text-1);
 }
 
 details[open] summary svg {
@@ -467,7 +467,7 @@ summary:focus {
     background: #00000080;
     backdrop-filter: blur(5px);
     border-radius: 10px;
-    color: var(--white);
+    color: var(--text-1);
     padding: 5%;
     display: flex;
     flex-direction: column;
