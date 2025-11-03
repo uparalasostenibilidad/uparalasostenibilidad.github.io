@@ -1,13 +1,13 @@
 :root {
-    --white: #c9c9c9;
-    --background: #abb8c3;
+    --white: #222222;
+    --background: #f7f7f7;
     --background-hover: #565758;
     --background-hover-t: #56575859;
     --primary-pink: #D2738A;
     --primary-red: #E53935;
     --primary-blue: #1976D2;
     --primary-orange: #FF6F00;
-    --primary-green: #76D219;
+    --primary-green: #275c34;
     --blue-gray: #f4fcff;
     --primary-violet: #6238E2;
     --background-violet-light: #EEEBFD;
@@ -501,5 +501,72 @@ p.card-sub {
         position: relative;
     }
 }
+
+/* ============================ */
+/* Centro de login y estilos UI */
+/* ============================ */
+
+/* Cuando la página contiene la clase .auth-page, centraremos el contenido */
+body.auth-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    margin: 0; /* el centrado lo gestiona body.auth-page */
+    background: var(--gray);
+    padding: 28px;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+}
+
+.login-container h2 {
+    margin-bottom: 14px;
+    text-align: center;
+}
+
+.input-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    background: var(--background);
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.input-box input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--background);
+    font-size: 0.98rem;
+}
+
+.btn { 
+  float: center;
+  padding: 12px 12px; 
+  font-size: 1rem; 
+  background: var(--primary-green); 
+  background: var(--primary-green); 
+  border: none; 
+  border-radius: 8px; 
+  color: var(--background); 
+  cursor: pointer; 
+  transition: background 0.3s ease; 
+}
+.btn-danger { padding: 10px 14px; }
+
+@media screen and (max-width: 700px) {
+    body.auth-page { padding-left: 6%; padding-right: 6%; }
+    .login-container { padding: 18px; }
+}
+
 
 

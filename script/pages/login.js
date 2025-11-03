@@ -12,38 +12,40 @@ const app = document.getElementById("app");
 // ============================
 
 function renderLogin() {
-  app.innerHTML = `
+app.innerHTML = `
     <section class="login-container">
-      <h2>Login Form</h2>
-      <form id="loginForm">
-        <div class="input-box">
-          <i>👤</i>
-          <input type="email" id="email" placeholder="Email" required />
-        </div>
-        <div class="input-box">
-          <i>🔒</i>
-          <input type="password" id="password" placeholder="Password" required />
-        </div>
-        <small><a href="#">¿Olvidaste tu contraseña?</a></small>
-        <button type="submit" class="btn">Login</button>
-      </form>
+        <h2>Iniciar sesión</h2>
+        <form id="loginForm">
+            <div class="input-box">
+                <i>👤</i>
+                <input type="email" id="email" placeholder="Correo electrónico" required />
+            </div>
+            <div class="input-box">
+                <i>🔒</i>
+                <input type="password" id="password" placeholder="Contraseña" required />
+            </div>
+            <button type="submit" class="btn">Entrar</button>
+        </form>
 
-      <p>¿No tienes cuenta? <a href="#" id="signupLink">Regístrate</a></p>
+        <p style="margin:16px 0;"></p>  
+        <p>¿No tienes cuenta? <a href="#" id="signupLink">Regístrate</a></p>
 
-      <div id="register" style="display:none; margin-top:20px;">
-        <h3 style="color:#0b5345">Crear cuenta</h3>
-        <div class="input-box">
-          <i>👤</i>
-          <input type="email" id="regEmail" placeholder="Correo electrónico" />
+        <div id="register" style="display:none; margin-top:20px;">
+            <h3 style="color:#0b5345">Crear cuenta</h3>
+            <div class="input-box">
+                <i>👤</i>
+                <input type="email" id="regEmail" placeholder="Correo electrónico" />
+            </div>
+            <div class="input-box">
+                <i>🔒</i>
+                <input type="password" id="regPass" placeholder="Contraseña" />
+            </div>
+            <button id="btnRegister" class="btn">Registrar</button>
         </div>
-        <div class="input-box">
-          <i>🔒</i>
-          <input type="password" id="regPass" placeholder="Contraseña" />
-        </div>
-        <button id="btnRegister" class="btn">Registrar</button>
-      </div>
     </section>
-  `;
+`;
+  // Asegurar que el body tenga la clase para centrar el login
+  document.body.classList.add('auth-page');
 
   // Eventos del login
   document.getElementById("loginForm").addEventListener("submit", loginUser);
@@ -61,6 +63,8 @@ function renderDashboard(user) {
       </div>
     </section>
   `;
+  // Quitar la clase de centrado al mostrar el dashboard
+  document.body.classList.remove('auth-page');
   document.getElementById("btnLogout").addEventListener("click", logoutUser);
 }
 
