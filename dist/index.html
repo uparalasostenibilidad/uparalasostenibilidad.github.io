@@ -1,104 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>ISO 14001 – Gestión Ambiental</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ISO 14001 – Gestión Ambiental</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" crossorigin src="/assets/index-C2gdAVA6.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DDefwJeg.css">
 </head>
 <body>
-<header>
-  <img src="assets/logo_empresa.png" class="logo" alt="Logo Empresa">
-  <h1>Sistema de Gestión Ambiental ISO 14001</h1>
-</header>
+  <header>
+    <img src="/assets/logo_empresa-Dnn7FdgQ.png" class="logo" alt="Logo Empresa" />
+    <h1>Sistema de Gestión Ambiental ISO 14001</h1>
+  </header>
 
-<main>
-  <!-- ============ LOGIN ============ -->
-  <section id="loginView" class="login-container">
-    <h2>Iniciar Sesión</h2>
-    <form id="loginForm">
-      <label>Correo electrónico</label>
-      <input type="email" id="email" required placeholder="tu@empresa.com">
-      <label>Contraseña</label>
-      <input type="password" id="password" required placeholder="********">
-      <button type="submit" class="btn" style="width:100%">Entrar</button>
-    </form>
-    <p style="margin-top:16px">¿No tienes cuenta? 
-      <a href="#" id="linkRegister" style="color:var(--color-primary-light)">Regístrate aquí</a>
-    </p>
-    <div id="registerBox" style="display:none;margin-top:20px">
-      <h3>Crear nueva cuenta</h3>
-      <input type="email" id="regEmail" placeholder="Correo electrónico">
-      <input type="password" id="regPass" placeholder="Contraseña">
-      <button id="btnRegister" class="btn" style="width:100%">Registrar</button>
-    </div>
-  </section>
+  <!-- Contenedor dinámico -->
+  <main id="app"></main>
 
-  <!-- ============ DASHBOARD ============ -->
-  <section id="dashboardView" style="display:none">
-    <div class="card">
-      <h2>Bienvenido, <span id="userEmail"></span></h2>
-      <p>Panel de seguimiento del cumplimiento ISO 14001.</p>
-      <button id="btnLogout" class="btn btn-danger">Salir</button>
-    </div>
-  </section>
-</main>
+  <footer>© 2025 Sistema de Gestión Ambiental</footer>
 
-<footer>© 2025 Sistema de Gestión Ambiental</footer>
-
-<script>
-const SUPABASE_URL = "https://hkxugotjfkyalmlkojhq.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhreHVnb3RqZmt5YWxtbGtvamhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxODk3MTAsImV4cCI6MjA3Nzc2NTcxMH0.mV21rbO4K5gfmYWF_ZB5mcjPG2TLu80w0SOMBCoDkaE";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// --- estado inicial ---
-window.onload = async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session) showDashboard(session.user);
-};
-
-// --- login ---
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = document.getElementById("email").value.trim();
-  const pass = document.getElementById("password").value.trim();
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
-  if (error) return alert("Error al iniciar sesión: " + error.message);
-  showDashboard(data.user);
-});
-
-// --- registro ---
-document.getElementById("linkRegister").onclick = (e) => {
-  e.preventDefault();
-  const box = document.getElementById("registerBox");
-  box.style.display = box.style.display === "none" ? "block" : "none";
-};
-
-document.getElementById("btnRegister").onclick = async () => {
-  const email = document.getElementById("regEmail").value.trim();
-  const pass = document.getElementById("regPass").value.trim();
-  const { data, error } = await supabase.auth.signUp({ email, password: pass });
-  if (error) return alert("Error al registrar: " + error.message);
-  alert("Cuenta creada. Revisa tu correo para confirmar.");
-};
-
-// --- logout ---
-document.getElementById("btnLogout").onclick = async () => {
-  await supabase.auth.signOut();
-  showLogin();
-};
-
-// --- funciones de vista ---
-function showDashboard(user){
-  document.getElementById("loginView").style.display="none";
-  document.getElementById("dashboardView").style.display="block";
-  document.getElementById("userEmail").textContent = user.email;
-}
-function showLogin(){
-  document.getElementById("loginView").style.display="block";
-  document.getElementById("dashboardView").style.display="none";
-}
-</script>
+  <!-- Lógica principal -->
 </body>
 </html>
