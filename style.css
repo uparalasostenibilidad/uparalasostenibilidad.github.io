@@ -442,8 +442,8 @@ summary:focus {
 }
 
 .card {
-    width: 32%;
-    height: 32%;
+    width: 101%;
+    height: 100%;
     border-radius: 12px;
     overflow: hidden;
     position: relative;
@@ -574,7 +574,7 @@ body.auth-page {
 .dashboard-main {
     max-width: 1200px;
     margin: 18px auto;
-    padding: 12px;
+    padding: 0px;
 }
 
 .cards {
@@ -621,6 +621,94 @@ nav a.btn { text-decoration:none; display:inline-block; padding:6px 10px; border
 @media screen and (max-width: 700px) {
   .dashboard-main { padding: 10px; }
   .card { min-width: 100%; }
+}
+
+/* Utility classes for question responder layout */
+.questions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+.question-card { padding: 12px; }
+.form-row { display:flex; gap:8px; align-items:center; margin-top:8px; }
+
+/* Inputs and small helpers used by the question responder */
+.input-width { width: 120px; }
+.input-flex { flex: 1 1 auto; min-width: 0; }
+.textarea-full { width: 100%; resize: vertical; }
+.btn-margin { margin-top: 8px; }
+.small { font-size: 0.95rem; color: var(--text-1); margin-top: 6px; }
+
+/* Progreso por predio */
+.progress-container { display:flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.progress-row { display:flex; flex-direction: column; gap:6px; padding: 8px; background: rgba(0,0,0,0.04); border-radius: 8px; }
+.progress-label { font-weight: 600; color: var(--text-1); }
+.progress-bar { width: 100%; height: 14px; background: rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary-green), var(--primary-blue)); width: 0%; transition: width 600ms ease; }
+
+
+
+
+/* ============================ */
+/* Tooltip de ayuda para preguntas */
+/* ============================ */
+.help-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1;
+    cursor: default;
+    user-select: none;
+    color: var(--primary-green);
+    border: 1px solid var(--primary-green);
+    background: #ffffff;
+    margin-left: 8px;
+}
+
+.help-icon:hover {
+    color: #ffffff;
+    background: var(--primary-green);
+}
+
+.tooltip-card {
+    position: fixed; /* se posiciona respecto al viewport para seguir el cursor */
+    z-index: 9999;
+    background: #ffffff; /* fondo blanco */
+    color: var(--text-1);
+    border-radius: 10px; /* borde redondeado */
+    padding: 12px 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18); /* sombra suave */
+    border: 1px solid rgba(0,0,0,0.06);
+    max-width: min(420px, 86vw); /* máximo ancho */
+    max-height: min(60vh, 420px); /* permitir scroll si es muy largo */
+    overflow: auto;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 120ms ease, transform 160ms ease; /* animación suave */
+    pointer-events: auto; /* permite scroll dentro del tooltip */
+}
+
+.tooltip-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.tooltip-section { margin: 8px 0; }
+.tooltip-section b { display:block; margin-bottom: 4px; color: var(--primary-green); }
+.tooltip-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+@media screen and (min-width: 720px){
+    .tooltip-grid { grid-template-columns: 1fr 1fr; }
 }
 
 

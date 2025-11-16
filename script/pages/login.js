@@ -1,6 +1,8 @@
 // script/pages/login.js
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-import { getDashboardPanels } from "./dashboard.js";
+import { renderDashboard as renderDashboardModule, renderQuestionResponder, renderProgressByPredio } from "./dashboard.js";
+
+console.log('[login.js] cargado');
 
 const SUPABASE_URL = "https://hkxugotjfkyalmlkojhq.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhreHVnb3RqZmt5YWxtbGtvamhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxODk3MTAsImV4cCI6MjA3Nzc2NTcxMH0.mV21rbO4K5gfmYWF_ZB5mcjPG2TLu80w0SOMBCoDkaE";
@@ -54,31 +56,47 @@ app.innerHTML = `
   document.getElementById("btnRegister").addEventListener("click", registerUser);
 }
 
-function renderDashboard(user) {
-  // Renderizamos un encabezado (head) con la info de login y un contenedor para los paneles
+async function renderDashboard(user){
+  // Render header + contenedor
   app.innerHTML = `
     <nav>
-      <!-- Barra de navegación página -->
       <label class="logo">Bienvenido, ${user.email}</label>
       <ul>
           <li><a href="#" id="btnLogout" class="btn btn-danger">Salir</a></li>
       </ul>
     </nav>
-
-    <main id="dashboardContent" class="dashboard-main">
-      <!-- Los paneles se insertarán aquí -->
-    </main>
+    <main id="dashboardContent" class="dashboard-main"></main>
   `;
 
-  // Quitar la clase de centrado al mostrar el dashboard
   document.body.classList.remove('auth-page');
 
-  // Insertar los paneles de dashboard desde el módulo
-  const dashContainer = document.getElementById('dashboardContent');
-  if (dashContainer) dashContainer.innerHTML = getDashboardPanels(user);
+  // Registrar evento de logout
+  const logoutEl = document.getElementById("btnLogout");
+  if(logoutEl) logoutEl.addEventListener("click", logoutUser);
 
-  // Registrar eventos
-  document.getElementById("btnLogout").addEventListener("click", logoutUser);
+  // Delegar renderizado del contenido al módulo dashboard: primero el formulario, luego la tabla
+  try{
+    // Preparar dos contenedores dentro de dashboardContent: primero el form, luego la tabla
+    const dashContent = document.getElementById('dashboardContent');
+    if(dashContent){
+      dashContent.innerHTML = `<div id="app-question"></div><div id="app-respuestas" style="margin-top:16px"></div><div id="app-progress" style="margin-top:18px"></div>`;
+      console.log('[login.js] renderizando form de preguntas (primero)...');
+      await renderQuestionResponder('#app-question');
+      console.log('[login.js] renderizando tabla de respuestas (después)...');
+      await renderDashboardModule('#app-respuestas');
+      console.log('[login.js] renderizando tablero de progreso por predio (último)...');
+      await renderProgressByPredio('#app-progress');
+    } else {
+      // fallback: si no existe dashboardContent, renderizar normalmente en él
+      console.log('[login.js] dashboardContent no encontrado, renderizando en #dashboardContent');
+      await renderDashboardModule('#dashboardContent');
+      let qroot = document.getElementById('app-question');
+      if(!qroot){ qroot = document.createElement('div'); qroot.id = 'app-question'; document.getElementById('dashboardContent').appendChild(qroot); }
+      await renderQuestionResponder('#app-question');
+    }
+  }catch(err){
+    console.error('Error renderizando dashboard:', err);
+  }
 }
 
 // ============================
