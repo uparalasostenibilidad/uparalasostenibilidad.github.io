@@ -1,12 +1,8 @@
 // script/pages/login.js
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { renderDashboard as renderDashboardModule, renderQuestionResponder, renderProgressByPredio } from "./dashboard.js";
+import { supabase } from "../../src/supabaseClient.js";
 
 console.log('[login.js] cargado');
-
-const SUPABASE_URL = "https://hkxugotjfkyalmlkojhq.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhreHVnb3RqZmt5YWxtbGtvamhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxODk3MTAsImV4cCI6MjA3Nzc2NTcxMH0.mV21rbO4K5gfmYWF_ZB5mcjPG2TLu80w0SOMBCoDkaE";
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const app = document.getElementById("app");
 
