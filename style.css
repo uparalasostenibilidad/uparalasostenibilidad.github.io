@@ -1,108 +1,61 @@
+/* Google Font: Rubik */
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300..900&display=swap');
+
+/* Paleta y variables */
 :root {
-    --text-1: #222222;
+    /* Nueva paleta */
+    --color-dominant-orange: #F99400;
+    --color-dominant-turquoise: #009886;
+    --color-dominant-lime: #D0D541;
+    --color-subordinate-limeLight: #D5E580;
+    --color-accent-red: #ED6352;
+    --color-accent-navy: #1E323B;
+
+    /* Neutrales */
+    --white: #ffffff;
+    --black: #000000;
     --background: #f7f7f7;
-    --background-hover: #565758;
-    --background-hover-t: #56575859;
-    --primary-pink: #D2738A;
-    --primary-red: #E53935;
-    --primary-blue: #1976D2;
-    --primary-orange: #FF6F00;
-    --primary-green: #2f6b3c;
-    --blue-gray: #f4fcff;
-    --primary-violet: #6238E2;
-    --background-violet-light: #EEEBFD;
+    --text-1: var(--color-accent-navy);
     --gray: #D5D4D5;
     --transparent: #00000000;
+
+    /* Compatibilidad (mapeo de variables existentes) */
+    --primary-green: var(--color-dominant-turquoise);
+    --primary-orange: var(--color-dominant-orange);
+    --primary-red: var(--color-accent-red);
+    --primary-blue: var(--color-accent-navy);
+    --primary-pink: var(--color-dominant-orange);
+    --primary-violet: var(--color-dominant-lime);
+    --background-violet-light: #EEEBFD;
+    --blue-gray: #f4fcff;
+    --background-hover: var(--color-accent-navy);
+    --background-hover-t: rgba(30,50,59,0.35);
 }
 
-
-/* FUENTE
-@font-face {
-    font-family: "Consolas";
-    src: url(main/fonts/consola.ttf);
-  }
-.card-body {
-*/
-
+/* Fuente ancizar original (si se requiere) */
 @font-face {
     font-family: "consola";
     src: url("./assets/ancizar.otf");
 }
 
-* {
-    padding: 0;
-    margin: 0;
-    text-decoration: none;
-    list-style: none;
-    box-sizing: border-box;
-}
+/* Reset básico */
+* { padding: 0; margin: 0; text-decoration: none; list-style: none; box-sizing: border-box; }
 
 body {
     padding-left: 20%;
     padding-right: 20%;
-    font-family: "consola" !important;
-    letter-spacing: 2px;
+    font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, sans-serif !important;
+    letter-spacing: 0.2px;
     margin-top: 4px;
     margin-bottom: 4px;
-    /*background-image: url(public/img/misc/bg205.gif); */
     background: var(--background);
     color: var(--text-1);
 }
 
-#viewer3d {
-    width: 100%;
-    height: 550px;
-}
-
-div.caja {
-    padding: 20px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    /* background-image: url(img/misc/bg205.gif); */
-    background-color: var(--transparent);
-    box-shadow: 0 0 15px var(--transparent);
-}
-
-a.link {
-    color: var(--primary-green);
-}
-
-label.logo {
-    display: center;
-    font-size: large;
-    color: var(--background-hover);
-    font-weight: bold;
-    min-width: auto;
-}
-
-.title {
-    width: 100%;
-    float: left;
-    font-size: larger;
-    padding-bottom: 30px;
-    color: #c9c9c9;
-    font-weight: bold;
-    text-decoration-line: underline;
-    text-underline-offset: 5px;
-}
-
-.pretitle {
-    width: 100%;
-    font-size: larger;
-    color: #c9c9c9;
-    font-weight: bold;
-}
-
-.text {
-    font-size: medium;
-    color: #c9c9c9;
-    font-weight: normal;
-    padding-top: 15px;
-    padding-bottom: 15px;
-}
-
+a.link { color: var(--primary-green); }
 
 /* nav y footer para pantallas normales */
+    .tooltip-section b { display:block; margin-bottom: 4px; color: var(--color-dominant-turquoise); }
 
 nav {
     padding: 20px;
@@ -138,7 +91,7 @@ nav ul li a {
 
 a.active,
 a:hover {
-    color: var(--text-1);
+    color: var(--primary-orange);
     text-decoration-line: underline;
     text-underline-offset: 3px;
     transition: .5s;
@@ -562,6 +515,17 @@ body.auth-page {
   transition: background 0.3s ease; 
 }
 .btn-danger { padding: 10px 14px; }
+
+/* Variantes según jerarquía cromática */
+.btn-primary { background: var(--primary-green); color: var(--white); }
+.btn-primary:hover { background: #007c70; }
+.btn-accent { background: var(--color-accent-red); color: var(--white); }
+.btn-accent:hover { background: #d55344; }
+.btn-secondary { background: var(--primary-orange); color: var(--white); }
+.btn-secondary:hover { background: #d57f00; }
+
+/* Fondos alternos y secundarios */
+.section-alt, .bg-secondary { background: var(--color-subordinate-limeLight); color: var(--color-accent-navy); }
 
 @media screen and (max-width: 700px) {
     body.auth-page { padding-left: 6%; padding-right: 6%; }
