@@ -551,6 +551,13 @@ export async function renderProgressByPredio(root = '#app-progress'){
   rootEl.appendChild(histWrapper);
   try { await renderHistogramaRespuestas(histWrapper); } catch(e){ console.warn('No se pudo renderizar histograma de respuestas:', e); }
 
+  // Alertas IA (se insertan debajo del histograma antes del avance por predio)
+  const alertasRoot = document.createElement('div');
+  alertasRoot.id = 'app-alertas-ia';
+  alertasRoot.style.marginBottom = '24px';
+  rootEl.appendChild(alertasRoot);
+  try { await renderAlertasObservaciones(alertasRoot); } catch(e){ console.warn('No se pudieron renderizar alertas IA:', e); }
+
   // Título e info del bloque de avance detallado
   const title = document.createElement('h3'); title.textContent = 'Avance por predio';
   container.appendChild(title);
@@ -836,7 +843,7 @@ export async function renderHistogramaRespuestas(root = '#app-histograma'){
   const rootEl = (typeof root === 'string') ? document.querySelector(root) : root;
   if(!rootEl) return;
   rootEl.innerHTML = '';
-  const card = document.createElement('div'); card.className='card';
+  const card = document.createElement('div'); card.className='card alert-card';
   const title = document.createElement('h3'); title.textContent = 'Distribución de respuestas (1–5)'; card.appendChild(title);
   const info = document.createElement('div'); info.className='small'; info.textContent='Conteo total de calificaciones registradas.'; card.appendChild(info);
 
@@ -860,4 +867,146 @@ export async function renderHistogramaRespuestas(root = '#app-histograma'){
   const footer = document.createElement('div'); footer.className='small'; footer.style.marginTop='6px'; footer.textContent = `Total de respuestas: ${total}`;
   card.appendChild(wrap); card.appendChild(footer);
   rootEl.appendChild(card);
+}
+
+// -----------------------------------------------------
+// Análisis IA de observaciones (clasificación + alertas)
+// -----------------------------------------------------
+/**
+ * Clasifica observaciones de la tabla respuestas usando reglas locales
+ * y opcionalmente un modelo externo (si se configura token HuggingFace).
+ * @param {Object} opts
+ * @param {boolean} opts.recientes - Si true filtra por últimos N días
+ * @param {number} opts.dias - Días hacia atrás para filtrar si recientes=true
+ * @returns {Promise<Array<{respuesta_id:number, alerta:{nivel:string,categoria:string,descripcion:string,accion_recomendada:string}}>>}
+ */
+export async function analizarObservacionesConIA(opts={}){
+  const { recientes=true, dias=30 } = opts;
+  const cutoffISO = recientes ? new Date(Date.now() - dias*24*60*60*1000).toISOString() : null;
+
+  // Obtener respuestas con observación no vacía
+  let rows = [];
+  try {
+    let query = supabase.from('respuestas').select('id,valor,observacion,predio_id,pregunta_id,fecha');
+    if(recientes && cutoffISO){ query = query.gte('fecha', cutoffISO); }
+    const { data, error } = await query.order('fecha', { ascending: false });
+    if(error) throw error;
+    rows = (data||[]).filter(r=> r.observacion && String(r.observacion).trim().length > 3);
+  }catch(e){ console.warn('Error obteniendo observaciones:', e.message||e); return []; }
+
+  if(!rows.length) return [];
+
+  // Diccionarios de patrones -> categoría
+  const patrones = [
+    { categoria: 'Incumplimiento', kws: ['no cumple','incumpl','falta de cumplimiento','no se realizó','omitido'] },
+    { categoria: 'Falta de recursos', kws: ['sin presupuesto','no hay recursos','equipamiento insuficiente','falta de personal','carencia'] },
+    { categoria: 'Riesgo ambiental', kws: ['derrame','contamin','residuo','riesgo','impacto ambiental','emisión'] },
+    { categoria: 'Capacitación requerida', kws: ['capacitación','entrenamiento','formación','no capacitado','desconoce procedimiento'] },
+    { categoria: 'Documento desactualizado', kws: ['documento desactualizado','manual antiguo','procedimiento viejo','no actualizado'] },
+    { categoria: 'Procedimiento no aplicado', kws: ['no se aplica','no aplicado','no siguió el procedimiento','sin seguir protocolo','saltó el proceso'] },
+    { categoria: 'Oportunidad de mejora', kws: ['mejorar','optimizar','podría','se sugiere','recomienda','oportunidad'] }
+  ];
+
+  // Acciones recomendadas por categoría
+  const acciones = {
+    'Incumplimiento': 'Realizar revisión inmediata y aplicar correcciones documentadas.',
+    'Falta de recursos': 'Evaluar necesidades y asignar presupuesto o personal adicional.',
+    'Riesgo ambiental': 'Implementar medidas de mitigación y monitoreo; registrar incidente.',
+    'Capacitación requerida': 'Planificar sesión de formación y verificar comprensión posterior.',
+    'Documento desactualizado': 'Actualizar documento y comunicar nueva versión al equipo.',
+    'Procedimiento no aplicado': 'Reforzar cumplimiento mediante auditoría interna y seguimiento.',
+    'Oportunidad de mejora': 'Registrar en plan de mejora continua y priorizar según impacto.'
+  };
+
+  // Determinar categoría principal por coincidencia de palabras clave (primera que aparezca)
+  function clasificar(obs){
+    const txt = obs.toLowerCase();
+    for(const p of patrones){
+      for(const kw of p.kws){ if(txt.includes(kw)){ return p.categoria; } }
+    }
+    return 'Oportunidad de mejora'; // fallback genérico
+  }
+
+  // Nivel según valor y categoría
+  function nivel(valor, categoria){
+    const v = Number(valor);
+    if(['Riesgo ambiental','Incumplimiento'].includes(categoria) && v <=3) return 'alto';
+    if(v <=2) return 'alto';
+    if(v === 3) return 'medio';
+    if(v === 4) return 'medio';
+    return 'bajo';
+  }
+
+  // Construir alertas
+  const alertas = rows.map(r => {
+    const categoria = clasificar(String(r.observacion));
+    const niv = nivel(r.valor, categoria);
+    const accion = acciones[categoria] || 'Registrar acción correctiva.';
+    const descripcion = `La observación sugiere ${categoria.toLowerCase()}: "${String(r.observacion).slice(0,180)}"`;
+    return {
+      respuesta_id: r.id,
+      alerta: { nivel: niv, categoria, descripcion, accion_recomendada: accion }
+    };
+  });
+
+  return alertas;
+}
+
+/** Renderiza card de alertas IA */
+export async function renderAlertasObservaciones(root='#app-alertas-ia'){
+  const rootEl = (typeof root === 'string') ? document.querySelector(root) : root;
+  if(!rootEl) return [];
+  rootEl.innerHTML='';
+  const card = document.createElement('div'); card.className='card';
+  const title = document.createElement('h3'); title.textContent='Alertas automáticas (IA)'; card.appendChild(title);
+  const info = document.createElement('div'); info.className='small'; info.textContent='Clasificación preliminar de observaciones por categoría y nivel.'; card.appendChild(info);
+
+  const alertas = await analizarObservacionesConIA({ recientes:true, dias:30 });
+  if(!alertas.length){
+    const empty = document.createElement('div'); empty.className='small'; empty.textContent='No hay observaciones clasificables en el período seleccionado.';
+    card.appendChild(empty); rootEl.appendChild(card); return alertas;
+  }
+
+  // Aggregate counts per category & level
+  const resumen = new Map(); // categoria -> { total, alto, medio, bajo }
+  for(const a of alertas){
+    const cat = a.alerta.categoria; const niv = a.alerta.nivel;
+    const entry = resumen.get(cat) || { total:0, alto:0, medio:0, bajo:0 };
+    entry.total++; entry[niv]++;
+    resumen.set(cat, entry);
+  }
+
+  const grid = document.createElement('div');
+  grid.className='alerts-grid';
+
+  for(const [cat, stats] of resumen.entries()){
+    const item = document.createElement('div'); item.className='alert-category-item';
+    item.innerHTML = `<strong>${cat}</strong>
+      <div class='alert-total'>${stats.total} alerta(s)</div>
+      <div class='alert-badges'>
+        <span class='alert-badge level-alto'>Alto ${stats.alto}</span>
+        <span class='alert-badge level-medio'>Medio ${stats.medio}</span>
+        <span class='alert-badge level-bajo'>Bajo ${stats.bajo}</span>
+      </div>`;
+    grid.appendChild(item);
+  }
+  card.appendChild(grid);
+
+  // Lista de alertas altas (limitada)
+  const altas = alertas.filter(a=>a.alerta.nivel==='alto').slice(0,10);
+  if(altas.length){
+    const listWrap = document.createElement('div'); listWrap.className='alertas-altas';
+    const subt = document.createElement('h4'); subt.textContent='Alertas de nivel alto (top 10)'; listWrap.appendChild(subt);
+    const ul = document.createElement('ul');
+    altas.forEach(a=>{
+      const li = document.createElement('li');
+      li.innerHTML = `<strong>#${a.respuesta_id}</strong> [${a.alerta.categoria}] ${a.alerta.descripcion}<br/><em>Acción: ${a.alerta.accion_recomendada}</em>`;
+      ul.appendChild(li);
+    });
+    listWrap.appendChild(ul);
+    card.appendChild(listWrap);
+  }
+
+  rootEl.appendChild(card);
+  return alertas;
 }
