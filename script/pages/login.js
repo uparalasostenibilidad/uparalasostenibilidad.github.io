@@ -60,12 +60,12 @@ async function renderDashboard(user){
   // Render header con pestañas + contenedor principal
   app.innerHTML = `
     <nav>
-      <label class="logo">Bienvenido, ${user.email}</label>
+      <label class="logo">Bienvenido, ${user?.email || 'Invitado'}</label>
       <ul>
-          <li><a href="#" id="tabAvance">Avance por predio</a></li>
-          <li><a href="#" id="tabResponder">Responder</a></li>
-          <li><a href="#" id="tabRespuestas">Respuestas/Evaluadores</a></li>
-          <li><a href="#" id="btnLogout" class="btn btn-danger">Salir</a></li>
+          <li><a href="#" id="tabAvance">Dashboard</a></li>
+          <li><a href="#" id="tabResponder">Calificar</a></li>
+          <li><a href="#" id="tabRespuestas">Respuestas</a></li>
+          ${user ? `<li><a href="#" id="btnLogout" class="btn btn-danger">Salir</a></li>` : `<li><a href="#" id="btnLogin" class="btn">Entrar</a></li>`}
       </ul>
     </nav>
     <main id="dashboardContent" class="dashboard-main"></main>
@@ -73,9 +73,11 @@ async function renderDashboard(user){
 
   document.body.classList.remove('auth-page');
 
-  // Registrar evento de logout
+  // Registrar evento de logout/login
   const logoutEl = document.getElementById("btnLogout");
   if(logoutEl) logoutEl.addEventListener("click", logoutUser);
+  const loginEl = document.getElementById("btnLogin");
+  if(loginEl) loginEl.addEventListener("click", (e)=>{ e.preventDefault(); renderLogin(); });
 
   // Enrutado simple por pestañas
   const dashContent = document.getElementById('dashboardContent');
@@ -93,10 +95,34 @@ async function renderDashboard(user){
     dashContent.innerHTML = '';
     try{
       if(view === 'responder'){
+        const { data: { session } } = await supabase.auth.getSession();
+        if(!session || !session.user){
+          dashContent.innerHTML = `
+            <div class="card">
+              <h3>Inicia sesión para calificar</h3>
+              <p class="small">Para responder preguntas necesitas una cuenta activa.</p>
+              <button id="goLogin1" class="btn">Entrar</button>
+            </div>`;
+          const btn = document.getElementById('goLogin1');
+          btn?.addEventListener('click', ()=> renderLogin());
+          return;
+        }
         await renderQuestionResponder('#dashboardContent');
       } else if(view === 'avance'){
         await renderProgressByPredio('#dashboardContent');
       } else if(view === 'respuestas'){
+        const { data: { session } } = await supabase.auth.getSession();
+        if(!session || !session.user){
+          dashContent.innerHTML = `
+            <div class="card">
+              <h3>Inicia sesión para ver respuestas</h3>
+              <p class="small">El listado de respuestas requiere autenticación.</p>
+              <button id="goLogin2" class="btn">Entrar</button>
+            </div>`;
+          const btn = document.getElementById('goLogin2');
+          btn?.addEventListener('click', ()=> renderLogin());
+          return;
+        }
         await renderDashboardModule('#dashboardContent');
       }
     }catch(err){ console.error('Error cargando vista', view, err); }
@@ -158,6 +184,6 @@ function toggleRegister(e) {
 
 window.onload = async () => {
   const { data: { session } } = await supabase.auth.getSession();
-  if (session) renderDashboard(session.user);
-  else renderLogin();
+  // Siempre mostrar el dashboard (vista de avance) como landing, incluso sin sesión
+  await renderDashboard(session?.user || null);
 };
