@@ -57,11 +57,14 @@ app.innerHTML = `
 }
 
 async function renderDashboard(user){
-  // Render header + contenedor
+  // Render header con pestañas + contenedor principal
   app.innerHTML = `
     <nav>
       <label class="logo">Bienvenido, ${user.email}</label>
       <ul>
+          <li><a href="#" id="tabAvance">Avance por predio</a></li>
+          <li><a href="#" id="tabResponder">Responder</a></li>
+          <li><a href="#" id="tabRespuestas">Respuestas/Evaluadores</a></li>
           <li><a href="#" id="btnLogout" class="btn btn-danger">Salir</a></li>
       </ul>
     </nav>
@@ -74,29 +77,39 @@ async function renderDashboard(user){
   const logoutEl = document.getElementById("btnLogout");
   if(logoutEl) logoutEl.addEventListener("click", logoutUser);
 
-  // Delegar renderizado del contenido al módulo dashboard: primero el formulario, luego la tabla
-  try{
-    // Preparar dos contenedores dentro de dashboardContent: primero el form, luego la tabla
-    const dashContent = document.getElementById('dashboardContent');
-    if(dashContent){
-      dashContent.innerHTML = `<div id="app-question"></div><div id="app-respuestas" style="margin-top:16px"></div><div id="app-progress" style="margin-top:18px"></div>`;
-      console.log('[login.js] renderizando form de preguntas (primero)...');
-      await renderQuestionResponder('#app-question');
-      console.log('[login.js] renderizando tabla de respuestas (después)...');
-      await renderDashboardModule('#app-respuestas');
-      console.log('[login.js] renderizando tablero de progreso por predio (último)...');
-      await renderProgressByPredio('#app-progress');
-    } else {
-      // fallback: si no existe dashboardContent, renderizar normalmente en él
-      console.log('[login.js] dashboardContent no encontrado, renderizando en #dashboardContent');
-      await renderDashboardModule('#dashboardContent');
-      let qroot = document.getElementById('app-question');
-      if(!qroot){ qroot = document.createElement('div'); qroot.id = 'app-question'; document.getElementById('dashboardContent').appendChild(qroot); }
-      await renderQuestionResponder('#app-question');
-    }
-  }catch(err){
-    console.error('Error renderizando dashboard:', err);
+  // Enrutado simple por pestañas
+  const dashContent = document.getElementById('dashboardContent');
+  const tabResponder = document.getElementById('tabResponder');
+  const tabAvance = document.getElementById('tabAvance');
+  const tabRespuestas = document.getElementById('tabRespuestas');
+
+  function setActive(tab){
+    [tabResponder, tabAvance, tabRespuestas].forEach(a => a && a.classList.remove('active'));
+    if(tab) tab.classList.add('active');
   }
+
+  async function loadView(view){
+    if(!dashContent) return;
+    dashContent.innerHTML = '';
+    try{
+      if(view === 'responder'){
+        await renderQuestionResponder('#dashboardContent');
+      } else if(view === 'avance'){
+        await renderProgressByPredio('#dashboardContent');
+      } else if(view === 'respuestas'){
+        await renderDashboardModule('#dashboardContent');
+      }
+    }catch(err){ console.error('Error cargando vista', view, err); }
+  }
+
+  // Eventos de pestañas
+  tabResponder?.addEventListener('click', async (e)=>{ e.preventDefault(); setActive(tabResponder); await loadView('responder'); });
+  tabAvance?.addEventListener('click', async (e)=>{ e.preventDefault(); setActive(tabAvance); await loadView('avance'); });
+  tabRespuestas?.addEventListener('click', async (e)=>{ e.preventDefault(); setActive(tabRespuestas); await loadView('respuestas'); });
+
+  // Vista por defecto: Avance por predio
+  setActive(tabAvance);
+  await loadView('avance');
 }
 
 // ============================
